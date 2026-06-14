@@ -323,7 +323,7 @@ The interface has **three tabs**:
 
 For when you've received a notice and just want to know *"what does this mean and what do I do?"*
 
-![Tab 1 - Document Summary](./screenshots/tab1-summary.png)
+![Tab 1 - Document Summary](./screenshot/tab1-summary.png)
 
 1. Select your preferred response language from the top-right dropdown
 2. Upload a PDF, PNG, or JPG of your document (drag-and-drop or click)
@@ -339,7 +339,7 @@ For when you've received a notice and just want to know *"what does this mean an
 
 For when you have a specific question about a document — *"Can I negotiate this fine?"* or *"Is this notice even valid?"*
 
-![Tab 2 - Ask About a Document](./screenshots/tab2-docqa.png)
+![Tab 2 - Ask About a Document](./screenshot/tab2-docqa.png)
 
 1. Upload the relevant document
 2. Type your specific question
@@ -350,7 +350,7 @@ For when you have a specific question about a document — *"Can I negotiate thi
 
 For general questions that don't need a document — *"What's the punishment for cheque bounce under BNS?"*
 
-![Tab 3 - General Legal Q&A](./screenshots/tab3-chat.png)
+![Tab 3 - General Legal Q&A](./screenshot/tab3-chat.png)
 
 1. Type your question in the chat box and press Enter (or click send)
 2. Optionally attach a document for extra context using "Attach document"
