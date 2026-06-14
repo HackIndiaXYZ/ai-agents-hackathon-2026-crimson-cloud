@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyaya Sahayak | Legal Document Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:        #FAF8F3;
+    --paper-raised: #FFFFFF;
+    --ink:          #1A2E1F;
+    --ink-soft:     #45554A;
+    --forest:       #2D5F3F;
+    --forest-dark:  #1F4530;
+    --gold:         #B8860B;
+    --gold-soft:    #E8DCC0;
+    --red:          #8B2E2E;
+    --red-soft:     #F3E4E1;
+    --border:       #D4CFC4;
+    --border-light: #E8E4DC;
+
+    --font-display: 'Spectral', Georgia, serif;
+    --font-body:    'Source Sans 3', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --shadow-paper: 0 1px 2px rgba(26,46,31,0.04), 0 2px 8px rgba(26,46,31,0.04);
+    --shadow-raised: 0 2px 4px rgba(26,46,31,0.06), 0 8px 24px rgba(26,46,31,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Paper texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(45,95,63,0.025) 39px, rgba(45,95,63,0.025) 40px);
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============ HEADER ============ */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 28px 0 20px;
+    margin-bottom: 32px;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .seal {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .seal::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed var(--gold);
+    border-radius: 50%;
+  }
+  .seal-mark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    color: var(--forest);
+    letter-spacing: -1px;
+  }
+
+  .brand-text h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .brand-text .subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .lang-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lang-select-wrap label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  select#targetLanguage {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231A2E1F' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    min-width: 150px;
+    transition: border-color 0.15s ease;
+  }
+  select#targetLanguage:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 1px;
+  }
+  select#targetLanguage:hover { border-color: var(--forest); }
+
+  /* ============ TABS ============ */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: transparent;
+    border: none;
+    padding: 14px 22px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn .tab-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--forest); }
+  .tab-btn.active .tab-num {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--paper-raised);
+  }
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 3px;
+    background: var(--forest);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+  .tab-btn.active::after { transform: scaleX(1); }
+
+  /* ============ LAYOUT ============ */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 60px;
+  }
+
+  .panel {
+    display: none;
+  }
+  .panel.active {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 880px) {
+    .panel.active { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--paper-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-paper);
+    padding: 28px;
+  }
+
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .card h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .card .desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  /* ============ FILE UPLOAD ============ */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--paper);
+    margin-bottom: 18px;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--forest);
+    background: rgba(45,95,63,0.04);
+  }
+  .dropzone.has-file {
+    border-color: var(--forest);
+    border-style: solid;
+    background: rgba(45,95,63,0.04);
+  }
+  .dropzone-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 12px;
+    color: var(--forest);
+  }
+  .dropzone-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .dropzone-hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .dropzone-filename {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--forest-dark);
+    margin-top: 8px;
+    word-break: break-all;
+    background: var(--paper-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    display: inline-block;
+  }
+  input[type="file"] { display: none; }
+
+  /* ============ TEXTAREA / INPUTS ============ */
+  textarea, .text-input {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    resize: vertical;
+    transition: border-color 0.15s ease;
+  }
+  textarea:focus, .text-input:focus {
+    outline: none;
+    border-color: var(--forest);
+    box-shadow: 0 0 0 3px rgba(45,95,63,0.1);
+  }
+  textarea::placeholder { color: #A8A199; }
+
+  label.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    margin-top: 18px;
+  }
+  label.field-label:first-of-type { margin-top: 0; }
+
+  /* ============ BUTTON ============ */
+  .btn-primary {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--paper-raised);
+    background: var(--forest);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px 24px;
+    cursor: pointer;
+    margin-top: 22px;
+    transition: background 0.15s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--forest-dark); }
+  .btn-primary:active:not(:disabled) { transform: scale(0.99); }
+  .btn-primary:disabled {
+    background: var(--border);
+    color: var(--ink-soft);
+    cursor: not-allowed;
+  }
+  .btn-primary svg { width: 18px; height: 18px; }
+
+  /* spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: var(--paper-raised);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============ RESULTS AREA ============ */
+  .results-card {
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .results-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 40px 20px;
+  }
+  .results-empty-icon {
+    width: 64px; height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.25;
+    color: var(--ink);
+  }
+  .results-empty h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .results-empty p { font-size: 13px; max-width: 320px; }
+
+  /* Loading state */
+  .results-loading {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 60px 20px;
+  }
+  .loading-seal {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--forest);
+    animation: spin 1s linear infinite;
+  }
+  .loading-text {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    text-align: center;
+  }
+  .loading-stage {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Error state */
+  .results-error {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    gap: 12px;
+  }
+  .error-stamp {
+    width: 56px; height: 56px;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    transform: rotate(-8deg);
+  }
+  .error-stamp svg { width: 28px; height: 28px; }
+  .results-error h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--red);
+    font-weight: 600;
+  }
+  .results-error p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    max-width: 380px;
+  }
+  .results-error .error-detail {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--red-soft);
+    border: 1px solid var(--red);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--red);
+    max-width: 100%;
+    overflow-wrap: break-word;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  /* ============ RESULT CONTENT ============ */
+  .result-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .status-badge .badge-seal {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .status-badge .badge-seal::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px dashed currentColor;
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+  .status-badge .badge-seal svg { width: 20px; height: 20px; }
+  .status-badge.verified { color: var(--forest); }
+  .status-badge.review { color: var(--red); }
+  .status-badge-text .badge-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .status-badge-text .badge-sub {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .result-section {
+    margin-bottom: 22px;
+  }
+  .result-section:last-child { margin-bottom: 0; }
+
+  .result-section .section-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-section .section-eyebrow svg { width: 14px; height: 14px; }
+
+  .result-section .section-body {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .result-section .section-body.urgency {
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-weight: 500;
+  }
+
+  .action-list {
+    list-style: none;
+    counter-reset: action-counter;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-list li {
+    counter-increment: action-counter;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .action-list li::before {
+    content: counter(action-counter);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--forest);
+    border: 1px solid var(--forest);
+    border-radius: 50%;
+    width: 24px; height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--forest-dark);
+    background: rgba(45,95,63,0.08);
+    border: 1px solid rgba(45,95,63,0.25);
+    border-radius: var(--radius-sm);
+    padding: 5px 10px;
+    letter-spacing: 0.02em;
+  }
+  .tag.gold {
+    color: var(--gold);
+    background: var(--gold-soft);
+    border-color: rgba(184,134,11,0.35);
+  }
+
+  /* ============ CHAT (Tab 3) ============ */
+  .panel-chat.active {
+    grid-template-columns: 1fr;
+  }
+  .chat-card {
+    display: flex;
+    flex-direction: column;
+    height: 640px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .chat-header .seal { width: 40px; height: 40px; }
+  .chat-header .seal-mark { font-size: 15px; }
+  .chat-header h2 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .chat-header .desc { font-size: 13px; margin: 0; }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .chat-msg {
+    display: flex;
+    gap: 12px;
+    max-width: 88%;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+  .chat-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid currentColor;
+  }
+  .chat-msg.assistant .chat-avatar { color: var(--forest); }
+  .chat-msg.user .chat-avatar { color: var(--ink-soft); }
+
+  .chat-bubble {
+    background: var(--paper);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .chat-msg.user .chat-bubble {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .chat-msg.assistant .chat-bubble {
+    box-shadow: var(--shadow-paper);
+  }
+
+  .chat-bubble .qa-citations {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chat-bubble .qa-warning {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+  .chat-bubble .qa-warning svg { width: 14px; height: 14px; }
+
+  .chat-input-row {
+    border-top: 1px solid var(--border-light);
+    padding: 18px 28px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .chat-input-row textarea {
+    flex: 1;
+    resize: none;
+    min-height: 46px;
+    max-height: 120px;
+  }
+  .chat-send-btn {
+    width: 46px; height: 46px;
+    border-radius: var(--radius-sm);
+    background: var(--forest);
+    border: none;
+    color: var(--paper-raised);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+  .chat-send-btn:hover:not(:disabled) { background: var(--forest-dark); }
+  .chat-send-btn:disabled { background: var(--border); cursor: not-allowed; }
+  .chat-send-btn svg { width: 18px; height: 18px; }
+
+  .chat-attach-row {
+    padding: 0 28px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chat-attach-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .chat-attach-btn:hover { border-color: var(--forest); color: var(--forest); }
+  .chat-attach-btn svg { width: 13px; height: 13px; }
+  .chat-attach-filename {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--forest-dark);
+    background: rgba(45,95,63,0.08);
+    border-radius: var(--radius-sm);
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chat-attach-filename button {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-soft); font-size: 14px; line-height: 1;
+    padding: 0;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 0 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  footer .api-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .status-dot.online { background: var(--forest); }
+  .status-dot.offline { background: var(--red); }
+
+  /* Visually hidden but accessible */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .spinner, .loading-seal { animation: none; border-top-color: var(--forest); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div class="header-row">
+      <div class="brand">
+        <div class="seal" aria-hidden="true">
+          <span class="seal-mark">न्या</span>
+        </div>
+        <div class="brand-text">
+          <h1>Nyaya Sahayak</h1>
+          <div class="subtitle">Plain-language legal assistant &middot; Indian Bare Acts</div>
+        </div>
+      </div>
+      <div class="lang-select-wrap">
+        <label for="targetLanguage">Response language</label>
+        <select id="targetLanguage" aria-label="Select response language">
+          <option value="hindi" selected>हिन्दी (Hindi)</option>
+          <option value="english">English</option>
+          <option value="tamil">தமிழ் (Tamil)</option>
+          <option value="telugu">తెలుగు (Telugu)</option>
+          <option value="marathi">मराठी (Marathi)</option>
+          <option value="bengali">বাংলা (Bengali)</option>
+          <option value="kannada">ಕನ್ನಡ (Kannada)</option>
+          <option value="gujarati">ગુજરાતી (Gujarati)</option>
+          <option value="punjabi">ਪੰਜਾਬੀ (Punjabi)</option>
+          <option value="odia">ଓଡ଼ିଆ (Odia)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TABS ============ -->
+  <nav class="tabs" role="tablist" aria-label="Tool mode">
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-summary" data-panel="summary">
+      <span class="tab-num">01</span> Document Summary
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-docqa" data-panel="docqa">
+      <span class="tab-num">02</span> Ask About a Document
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-chat" data-panel="chat">
+      <span class="tab-num">03</span> General Legal Q&amp;A
+    </button>
+  </nav>
+
+  <!-- ============ LAYOUT ============ -->
+  <main class="layout">
+
+    <!-- ===== PANEL 1: SUMMARY ===== -->
+    <section class="panel active" id="panel-summary" role="tabpanel" aria-labelledby="tab-summary">
+
+      <div class="card">
+        <div class="card-label">Step 01 &middot; Upload</div>
+        <h2>Summarise a legal notice</h2>
+        <p class="desc">Upload a notice, summons, or agreement. Receive a plain-language breakdown of the issue, deadlines, and what to do next — grounded in Indian bare acts.</p>
+
+        <div class="dropzone" id="dropzone-summary" tabindex="0" role="button" aria-label="Upload document for summary">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="dropzone-text">Click to upload or drag a file here</div>
+          <div class="dropzone-hint">PDF, PNG, JPG &middot; up to 10 MB</div>
+          <div class="dropzone-filename" id="filename-summary" style="display:none;"></div>
+        </div>
+        <input type="file" id="file-summary" accept=".pdf,.png,.jpg,.jpeg">
+
+        <button class="btn-primary" id="btn-summary" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Analyse Document
+        </button>
+      </div>
+
+      <div class="card results-card" id="results-summary">
+        <div class="results-empty">
+          <svg class="results-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 2v6h6M9 13h6M9 17h6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3>No document analysed yet</h3>
+          <p>Upload a legal document and select "Analyse Document" to see a plain-language summary, key deadlines, and recommended next steps.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== PANEL 2: DOC + QUESTION ===== -->
+    <section class="panel" id="panel-docqa" role="tabpanel" aria-labelledby="tab-docqa">
+
+      <div class="card">
+        <div class="card-label">Step 02 &middot; Document + Question</div>
+        <h2>Ask about a specific document</h2>
+        <p class="desc">Upload a document and ask a specific question about it — e.g. "Can I negotiate this amount?" or "Is this notice valid?"</p>
+
+        <div class="dropzone" id="dropzone-docqa" tabindex="0" role="button" aria-label="Upload document for question">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="dropzone-text">Click to upload or drag a file here</div>
+          <div class="dropzone-hint">PDF, PNG, JPG &middot; up to 10 MB</div>
+          <div class="dropzone-filename" id="filename-docqa" style="display:none;"></div>
+        </div>
+        <input type="file" id="file-docqa" accept=".pdf,.png,.jpg,.jpeg">
+
+        <label class="field-label" for="question-docqa">Your question</label>
+        <textarea id="question-docqa" rows="3" placeholder="e.g. Can the landlord legally charge this late fee?"></textarea>
+
+        <button class="btn-primary" id="btn-docqa" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Ask About This Document
+        </button>
+      </div>
+
+      <div class="card results-card" id="results-docqa">
+        <div class="results-empty">
+          <svg class="results-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke-linecap="round"/>
+            <path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17h.01" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3>Ask a question to begin</h3>
+          <p>Upload a document and type your question. The answer will be grounded in both your document and the relevant Indian bare acts.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== PANEL 3: GENERAL CHAT ===== -->
+    <section class="panel panel-chat" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat">
+
+      <div class="card chat-card">
+        <div class="chat-header">
+          <div class="seal" aria-hidden="true"><span class="seal-mark">न्या</span></div>
+          <div>
+            <h2>General Legal Q&amp;A</h2>
+            <p class="desc">Ask any question about Indian law — BNS, CrPC, BSA, Transfer of Property Act, Real Estate Act, Delhi Rent Control Act, and more.</p>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg assistant">
+            <div class="chat-avatar" aria-hidden="true">न्या</div>
+            <div class="chat-bubble">
+              नमस्ते! आप मुझसे भारतीय कानून के बारे में कोई भी सवाल पूछ सकते हैं — जैसे "BNS की धारा 138 क्या कहती है?" या "किरायेदार को बेदखल करने का नोटिस कितने दिन पहले देना ज़रूरी है?"
+              <br><br>
+              <span style="color: var(--ink-soft); font-size: 13px;">Ask me anything about Indian law — e.g. "What does Section 138 of BNS say?" or "How much notice is required before evicting a tenant?"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-attach-row" id="chat-attach-row">
+          <button class="chat-attach-btn" id="chat-attach-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Attach document (optional)
+          </button>
+          <span id="chat-filename-display"></span>
+        </div>
+        <input type="file" id="file-chat" accept=".pdf,.png,.jpg,.jpeg">
+
+        <div class="chat-input-row">
+          <textarea id="chat-input" rows="1" placeholder="Type your legal question…" aria-label="Your question"></textarea>
+          <button class="chat-send-btn" id="chat-send" aria-label="Send question">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    Nyaya Sahayak draws on Indian bare acts (BNS, CrPC, BSA, Transfer of Property Act, Real Estate Act 2016, Delhi Rent Control Act) for reference only — not a substitute for professional legal advice.
+    <div class="api-status">
+      <span class="status-dot" id="api-status-dot"></span>
+      <span id="api-status-text">Checking API connection…</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  // Configuration
+  // ============================================================
+  const API_BASE = "http://localhost:8000";
+
+  // ============================================================
+  // Tab switching
+  // ============================================================
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels  = document.querySelectorAll('.panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      panels.forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+    });
+  });
+
+  // ============================================================
+  // Health check
+  // ============================================================
+  async function checkHealth() {
+    const dot  = document.getElementById('api-status-dot');
+    const text = document.getElementById('api-status-text');
+    try {
+      const res = await fetch(API_BASE + "/");
+      if (res.ok) {
+        dot.classList.add('online');
+        text.textContent = "Connected to analysis engine";
+      } else {
+        throw new Error("bad status");
+      }
+    } catch (e) {
+      dot.classList.add('offline');
+      text.textContent = "Cannot reach API at " + API_BASE + " — start the server with: python api.py";
+    }
+  }
+  checkHealth();
+
+  // ============================================================
+  // Generic dropzone setup
+  // ============================================================
+  function setupDropzone(dropzoneId, inputId, filenameId, onFileSelected) {
+    const dropzone = document.getElementById(dropzoneId);
+    const input    = document.getElementById(inputId);
+    const filenameEl = document.getElementById(filenameId);
+
+    dropzone.addEventListener('click', () => input.click());
+    dropzone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+    });
+
+    ['dragover', 'dragenter'].forEach(evt =>
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); })
+    );
+    ['dragleave', 'dragend', 'drop'].forEach(evt =>
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); })
+    );
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        handleFile(input.files[0]);
+      }
+    });
+
+    input.addEventListener('change', () => {
+      if (input.files.length) handleFile(input.files[0]);
+    });
+
+    function handleFile(file) {
+      const allowed = ['.pdf', '.png', '.jpg', '.jpeg'];
+      const ext = '.' + file.name.split('.').pop().toLowerCase();
+      if (!allowed.includes(ext)) {
+        alert('Unsupported file type. Please upload a PDF, PNG, or JPG file.');
+        input.value = '';
+        return;
+      }
+      dropzone.classList.add('has-file');
+      filenameEl.textContent = '📄 ' + file.name;
+      filenameEl.style.display = 'inline-block';
+      onFileSelected(file);
+    }
+  }
+
+  // ============================================================
+  // PANEL 1: Document Summary
+  // ============================================================
+  let summaryFile = null;
+  const btnSummary = document.getElementById('btn-summary');
+
+  setupDropzone('dropzone-summary', 'file-summary', 'filename-summary', (file) => {
+    summaryFile = file;
+    btnSummary.disabled = false;
+  });
+
+  btnSummary.addEventListener('click', async () => {
+    if (!summaryFile) return;
+    const lang = document.getElementById('targetLanguage').value;
+    const resultsEl = document.getElementById('results-summary');
+
+    showLoading(resultsEl, [
+      "Reading your document…",
+      "Extracting key legal terms…",
+      "Searching Indian bare acts…",
+      "Preparing your summary…"
+    ]);
+    setButtonLoading(btnSummary, true, 'Analyse Document');
+
+    const formData = new FormData();
+    formData.append('file', summaryFile);
+    formData.append('target_language', lang);
+
+    try {
+      const res = await fetch(API_BASE + '/api/v1/analyze', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(resultsEl, data.detail);
+      } else {
+        renderSummary(resultsEl, data);
+      }
+    } catch (err) {
+      showError(resultsEl, { error: "Network error", detail: err.message, stage: "connection" });
+    } finally {
+      setButtonLoading(btnSummary, false, 'Analyse Document');
+    }
+  });
+
+  function renderSummary(container, data) {
+    const isVerified = !data.is_hallucinated_warning;
+    const badgeClass = isVerified ? 'verified' : 'review';
+    const badgeIcon = isVerified
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const badgeTitle = isVerified ? 'Verified' : 'Review Advised';
+    const badgeSub = isVerified ? 'Grounded in cited acts' : 'May exceed cited context';
+
+    const actsTags = (data.source_acts || []).map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('');
+    const termsTags = (data.search_terms_used || []).map(t => `<span class="tag gold">${escapeHtml(t)}</span>`).join('');
+    const actionItems = (data.action_plan || []).map(a => `<li>${escapeHtml(a)}</li>`).join('');
+
+    container.innerHTML = `
+      <div class="result-header">
+        <div>
+          <div class="card-label">Analysis Result</div>
+          <h2 style="margin-bottom:0;">Document Summary</h2>
+        </div>
+        <div class="status-badge ${badgeClass}">
+          <div class="badge-seal">${badgeIcon}</div>
+          <div class="status-badge-text">
+            <div class="badge-title">${badgeTitle}</div>
+            <div class="badge-sub">${badgeSub}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          The Issue
+        </div>
+        <div class="section-body">${escapeHtml(data.legal_issue)}</div>
+      </div>
+
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Timeline &amp; Urgency
+        </div>
+        <div class="section-body urgency">${escapeHtml(data.timeline_urgency)}</div>
+      </div>
+
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          What To Do Next
+        </div>
+        <ol class="action-list">${actionItems}</ol>
+      </div>
+
+      ${actsTags ? `
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Referenced Acts
+        </div>
+        <div class="tag-row">${actsTags}</div>
+      </div>` : ''}
+
+      ${termsTags ? `
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Search Terms Used
+        </div>
+        <div class="tag-row">${termsTags}</div>
+      </div>` : ''}
+    `;
+  }
+
+  // ============================================================
+  // PANEL 2: Document + Question
+  // ============================================================
+  let docqaFile = null;
+  const btnDocqa = document.getElementById('btn-docqa');
+  const questionDocqa = document.getElementById('question-docqa');
+
+  setupDropzone('dropzone-docqa', 'file-docqa', 'filename-docqa', (file) => {
+    docqaFile = file;
+    validateDocqaBtn();
+  });
+
+  questionDocqa.addEventListener('input', validateDocqaBtn);
+
+  function validateDocqaBtn() {
+    btnDocqa.disabled = !(docqaFile && questionDocqa.value.trim().length > 0);
+  }
+
+  btnDocqa.addEventListener('click', async () => {
+    if (!docqaFile || !questionDocqa.value.trim()) return;
+    const lang = document.getElementById('targetLanguage').value;
+    const resultsEl = document.getElementById('results-docqa');
+
+    showLoading(resultsEl, [
+      "Reading your document…",
+      "Understanding your question…",
+      "Searching Indian bare acts…",
+      "Preparing your answer…"
+    ]);
+    setButtonLoading(btnDocqa, true, 'Ask About This Document');
+
+    const formData = new FormData();
+    formData.append('file', docqaFile);
+    formData.append('target_language', lang);
+    formData.append('question', questionDocqa.value.trim());
+
+    try {
+      const res = await fetch(API_BASE + '/api/v1/analyze', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(resultsEl, data.detail);
+      } else {
+        renderQueryAnswer(resultsEl, data, questionDocqa.value.trim());
+      }
+    } catch (err) {
+      showError(resultsEl, { error: "Network error", detail: err.message, stage: "connection" });
+    } finally {
+      setButtonLoading(btnDocqa, false, 'Ask About This Document');
+    }
+  });
+
+  function renderQueryAnswer(container, data, question) {
+    const isVerified = !data.is_hallucinated_warning;
+    const badgeClass = isVerified ? 'verified' : 'review';
+    const badgeIcon = isVerified
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const badgeTitle = isVerified ? 'Verified' : 'Review Advised';
+    const badgeSub = isVerified ? 'Grounded in cited acts' : 'May exceed cited context';
+
+    const actsTags = (data.relevant_acts || []).map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('');
+    const citeTags = (data.citations || []).map(c => `<span class="tag gold">${escapeHtml(c)}</span>`).join('');
+
+    container.innerHTML = `
+      <div class="result-header">
+        <div>
+          <div class="card-label">Your Question</div>
+          <h2 style="margin-bottom:0; font-size:18px;">${escapeHtml(question)}</h2>
+        </div>
+        <div class="status-badge ${badgeClass}">
+          <div class="badge-seal">${badgeIcon}</div>
+          <div class="status-badge-text">
+            <div class="badge-title">${badgeTitle}</div>
+            <div class="badge-sub">${badgeSub}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Answer
+        </div>
+        <div class="section-body">${escapeHtml(data.answer)}</div>
+      </div>
+
+      ${citeTags ? `
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17H7A5 5 0 017 7h2m6 10h2a5 5 0 000-10h-2M8 12h8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Citations
+        </div>
+        <div class="tag-row">${citeTags}</div>
+      </div>` : ''}
+
+      ${actsTags ? `
+      <div class="result-section">
+        <div class="section-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Relevant Acts
+        </div>
+        <div class="tag-row">${actsTags}</div>
+      </div>` : ''}
+    `;
+  }
+
+  // ============================================================
+  // PANEL 3: General Chat
+  // ============================================================
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  const chatSend = document.getElementById('chat-send');
+  const chatAttachBtn = document.getElementById('chat-attach-btn');
+  const chatFileInput = document.getElementById('file-chat');
+  const chatFilenameDisplay = document.getElementById('chat-filename-display');
+
+  let chatAttachedFile = null;
+
+  chatAttachBtn.addEventListener('click', () => chatFileInput.click());
+  chatFileInput.addEventListener('change', () => {
+    if (chatFileInput.files.length) {
+      const file = chatFileInput.files[0];
+      const allowed = ['.pdf', '.png', '.jpg', '.jpeg'];
+      const ext = '.' + file.name.split('.').pop().toLowerCase();
+      if (!allowed.includes(ext)) {
+        alert('Unsupported file type. Please upload a PDF, PNG, or JPG file.');
+        chatFileInput.value = '';
+        return;
+      }
+      chatAttachedFile = file;
+      chatFilenameDisplay.innerHTML = `
+        <span class="chat-attach-filename">
+          📄 ${escapeHtml(file.name)}
+          <button type="button" aria-label="Remove attachment" id="chat-remove-file">✕</button>
+        </span>`;
+      document.getElementById('chat-remove-file').addEventListener('click', () => {
+        chatAttachedFile = null;
+        chatFileInput.value = '';
+        chatFilenameDisplay.innerHTML = '';
+      });
+    }
+  });
+
+  // Auto-resize textarea
+  chatInput.addEventListener('input', () => {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+  });
+
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  });
+  chatSend.addEventListener('click', sendChatMessage);
+
+  async function sendChatMessage() {
+    const question = chatInput.value.trim();
+    if (!question) return;
+
+    const lang = document.getElementById('targetLanguage').value;
+
+    // Add user message
+    appendChatMessage('user', escapeHtml(question));
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+
+    // Add loading message
+    const loadingId = 'loading-' + Date.now();
+    appendChatMessage('assistant', `
+      <span class="loading-stage" style="display:flex; align-items:center; gap:8px;">
+        <span class="spinner" style="border-top-color: var(--forest); width:14px; height:14px; border-width:2px;"></span>
+        Searching bare acts and preparing answer…
+      </span>
+    `, loadingId);
+
+    setButtonLoading(chatSend, true, '');
+    chatSend.innerHTML = '<span class="spinner"></span>';
+
+    const formData = new FormData();
+    formData.append('question', question);
+    formData.append('target_language', lang);
+    if (chatAttachedFile) formData.append('file', chatAttachedFile);
+
+    try {
+      const res = await fetch(API_BASE + '/api/v1/ask', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      const loadingEl = document.getElementById(loadingId);
+
+      if (!res.ok) {
+        const detail = data.detail || {};
+        loadingEl.querySelector('.chat-bubble').innerHTML = `
+          <strong style="color: var(--red);">⚠ ${escapeHtml(detail.error || 'Something went wrong')}</strong>
+          ${detail.detail ? `<div style="margin-top:6px; font-family: var(--font-mono); font-size:11px; color: var(--ink-soft);">${escapeHtml(detail.detail)}</div>` : ''}
+        `;
+      } else {
+        const citeTags = (data.citations || []).map(c => `<span class="tag gold" style="font-size:11px;">${escapeHtml(c)}</span>`).join('');
+        const actsTags = (data.relevant_acts || []).map(a => `<span class="tag" style="font-size:11px;">${escapeHtml(a)}</span>`).join('');
+        const warning = data.is_hallucinated_warning
+          ? `<div class="qa-warning">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               This answer may go beyond the cited acts — verify with a professional.
+             </div>` : '';
+
+        loadingEl.querySelector('.chat-bubble').innerHTML = `
+          ${escapeHtml(data.answer)}
+          ${(citeTags || actsTags) ? `<div class="qa-citations">${citeTags}${actsTags}</div>` : ''}
+          ${warning}
+        `;
+      }
+    } catch (err) {
+      const loadingEl = document.getElementById(loadingId);
+      loadingEl.querySelector('.chat-bubble').innerHTML = `
+        <strong style="color: var(--red);">⚠ Network error</strong>
+        <div style="margin-top:6px; font-family: var(--font-mono); font-size:11px; color: var(--ink-soft);">
+          ${escapeHtml(err.message)} — is the API running at ${API_BASE}?
+        </div>
+      `;
+    } finally {
+      chatSend.disabled = false;
+      chatSend.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+      // Clear attachment after sending
+      chatAttachedFile = null;
+      chatFileInput.value = '';
+      chatFilenameDisplay.innerHTML = '';
+    }
+  }
+
+  function appendChatMessage(role, html, id) {
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg ' + role;
+    if (id) msg.id = id;
+    const avatarText = role === 'user' ? 'You' : 'न्या';
+    msg.innerHTML = `
+      <div class="chat-avatar" aria-hidden="true">${avatarText}</div>
+      <div class="chat-bubble">${html}</div>
+    `;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return msg;
+  }
+
+  // ============================================================
+  // Shared UI helpers
+  // ============================================================
+  function showLoading(container, stages) {
+    let stageIndex = 0;
+    container.innerHTML = `
+      <div class="results-loading">
+        <div class="loading-seal" aria-hidden="true"></div>
+        <div class="loading-text">
+          <div class="loading-stage" id="loading-stage-text">${stages[0]}</div>
+        </div>
+      </div>
+    `;
+    const stageEl = container.querySelector('#loading-stage-text');
+    const interval = setInterval(() => {
+      stageIndex = (stageIndex + 1) % stages.length;
+      if (stageEl) stageEl.textContent = stages[stageIndex];
+      else clearInterval(interval);
+    }, 2200);
+    container.dataset.loadingInterval = interval;
+  }
+
+  function showError(container, detail) {
+    if (container.dataset.loadingInterval) {
+      clearInterval(Number(container.dataset.loadingInterval));
+    }
+    detail = detail || {};
+    const errorMsg = typeof detail === 'string' ? detail : (detail.error || 'An unexpected error occurred.');
+    const errorDetail = typeof detail === 'object' ? detail.detail : null;
+    const stage = typeof detail === 'object' ? detail.stage : null;
+
+    container.innerHTML = `
+      <div class="results-error">
+        <div class="error-stamp" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>${escapeHtml(errorMsg)}</h3>
+        ${stage ? `<p>Failed at stage: <strong>${escapeHtml(stage)}</strong></p>` : ''}
+        ${errorDetail ? `<div class="error-detail">${escapeHtml(String(errorDetail))}</div>` : ''}
+      </div>
+    `;
+  }
+
+  function setButtonLoading(btn, isLoading, label) {
+    if (isLoading) {
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Processing…`;
+    } else {
+      btn.disabled = false;
+      // Restore original icon + label based on button id
+      const icons = {
+        'btn-summary': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        'btn-docqa': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      };
+      btn.innerHTML = `${icons[btn.id] || ''} ${label}`;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>
